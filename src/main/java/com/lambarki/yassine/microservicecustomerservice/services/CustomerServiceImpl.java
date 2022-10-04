@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,16 +35,24 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerResponseDTO getCustomer(String id) {
-        return null;
+        Customer customer = customerRepository.findById(id).get();
+        return customerMapper.customerToCustomerResponseDTO(customer);
     }
 
     @Override
     public CustomerResponseDTO update(CustomerRequestDTO customerRequestDTO) {
-        return null;
+        Customer customer = customerMapper.customerRequestDtoToCustomer(customerRequestDTO);
+        Customer updatedCustomer = customerRepository.save(customer);
+        return customerMapper.customerToCustomerResponseDTO(updatedCustomer);
     }
 
     @Override
     public List<CustomerResponseDTO> listCustomers() {
-        return null;
+        List<Customer> customers = customerRepository.findAll();
+        List<CustomerResponseDTO> customerResponseDTOS =
+                customers.stream()
+                .map(customer -> customerMapper.customerToCustomerResponseDTO(customer))
+                        .collect(Collectors.toList());
+        return customerResponseDTOS;
     }
 }
