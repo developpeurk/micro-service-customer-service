@@ -1,5 +1,5 @@
 ## EUREKA
 
 
-![EUREKA](image/eureka.png)
+![EUREKA](image/EUREKA.png)
 
