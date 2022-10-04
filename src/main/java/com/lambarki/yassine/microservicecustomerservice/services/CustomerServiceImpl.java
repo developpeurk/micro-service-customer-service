@@ -55,4 +55,9 @@ public class CustomerServiceImpl implements CustomerService {
                         .collect(Collectors.toList());
         return customerResponseDTOS;
     }
+
+    @Override
+    public void deleteCustomer(String id) {
+        customerRepository.deleteById(id);
+    }
 }
