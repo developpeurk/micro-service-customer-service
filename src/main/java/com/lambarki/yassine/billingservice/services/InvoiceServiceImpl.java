@@ -7,6 +7,7 @@ import com.lambarki.yassine.billingservice.entities.Invoice;
 import com.lambarki.yassine.billingservice.mappers.InvoiceMapper;
 import com.lambarki.yassine.billingservice.openfeign.CustomerRestClient;
 import com.lambarki.yassine.billingservice.repositories.InvoiceRepository;
+import com.lambarki.yassine.billingservice.exceptions.CustomerNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,13 +32,26 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public InvoiceResponseDTO save(InvoiceRequestDTO invoiceRequestDTO) {
+        /*
+         * Verification de l'intégrité reférentielle Invoice / Customer
+         * */
+        Customer customer=null;
+
+        try{
+            customer = customerRestClient.getCustomerByID(invoiceRequestDTO.getCustomerID());
+        }catch (Exception e){
+
+            throw new CustomerNotFoundException("customer not found with the ID " + invoiceRequestDTO.getCustomerID());
+        }
+
+
+
         Invoice invoice = invoiceMapper.fromInvoiceRequestDtoToInvoice(invoiceRequestDTO);
         invoice.setId(UUID.randomUUID().toString());
         invoice.setDate(new Date());
-        /*
-        * Verification de l'intégrité reférentielle Invoice / Customer
-        * */
+
         Invoice savedInvoice = invoiceRepository.save(invoice);
+        savedInvoice.setCustomer(customer);
         return invoiceMapper.fromInvoiceToInvoiceResponseDTO(savedInvoice);
     }
 

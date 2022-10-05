@@ -2,7 +2,10 @@ package com.lambarki.yassine.billingservice.web;
 
 import com.lambarki.yassine.billingservice.dtos.InvoiceRequestDTO;
 import com.lambarki.yassine.billingservice.dtos.InvoiceResponseDTO;
+import com.lambarki.yassine.billingservice.exceptions.CustomerNotFoundException;
 import com.lambarki.yassine.billingservice.services.InvoiceService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +38,11 @@ public class InvoiceRestController {
     @PostMapping(path = "/invoices")
     public InvoiceResponseDTO save(@RequestBody InvoiceRequestDTO invoiceRequestDTO){
         return invoiceService.save(invoiceRequestDTO);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> exceptionHandler(Exception e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
